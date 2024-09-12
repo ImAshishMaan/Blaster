@@ -1,5 +1,4 @@
 #include "Weapon.h"
-
 #include "Blaster/Character/BlasterCharacter.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
@@ -96,5 +95,12 @@ void AWeapon::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeP
 void AWeapon::ShowPickupWidget(bool bShowWidget) {
 	if(PickupWidget) {
 		PickupWidget->SetVisibility(bShowWidget);
+	}
+}
+
+void AWeapon::Fire() {
+	if(FireAnimation) {
+		WeaponMesh->PlayAnimation(FireAnimation, false);
+		
 	}
 }
