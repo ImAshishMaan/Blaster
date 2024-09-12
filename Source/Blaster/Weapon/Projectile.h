@@ -4,6 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "Projectile.generated.h"
 
+class UProjectileMovementComponent;
 class UBoxComponent;
 
 UCLASS()
@@ -21,6 +22,16 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* CollisionBox;
+
+	UPROPERTY(EditAnywhere)
+	UProjectileMovementComponent* ProjectileMovement;
+
+	UPROPERTY(EditAnywhere)
+	UParticleSystem* Tracer;
+
+	UParticleSystemComponent* TracerComponent;
+
+	
 
 public:
 };
