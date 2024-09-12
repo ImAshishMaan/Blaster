@@ -34,6 +34,25 @@ public:
 
 	virtual void Fire(const FVector& HitTarget);
 
+	/*
+	 * Texture for the weapon crosshairs
+	 */
+
+	UPROPERTY(EditAnywhere)
+	UTexture2D* CrosshairsCenter;
+
+	UPROPERTY(EditAnywhere)
+	UTexture2D* CrosshairsLeft;
+
+	UPROPERTY(EditAnywhere)
+	UTexture2D* CrosshairsRight;
+
+	UPROPERTY(EditAnywhere)
+	UTexture2D* CrosshairsTop;
+
+	UPROPERTY(EditAnywhere)
+	UTexture2D* CrosshairsBottom;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -76,6 +95,8 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<ACasing> CasingClass;
+
+	
 
 public:
 
