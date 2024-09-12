@@ -2,6 +2,7 @@
 #include "Components/BoxComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Sound/SoundCue.h"
 
 AProjectile::AProjectile() {
 	PrimaryActorTick.bCanEverTick = true;
@@ -34,8 +35,27 @@ void AProjectile::BeginPlay() {
 			EAttachLocation::KeepWorldPosition
 		);
 	}
+	if(HasAuthority()) {
+		CollisionBox->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
+	}
+}
+
+void AProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	FVector NormalImpulse, const FHitResult& HitResult) {
+
+	Destroy();
 }
 
 void AProjectile::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
+}
+
+void AProjectile::Destroyed() {
+	Super::Destroyed();
+	if(ImpactParticles) {
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, GetActorLocation(), FRotator(0.0f), true);
+	}
+	if(ImpactSound) {
+		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
+	}
 }
