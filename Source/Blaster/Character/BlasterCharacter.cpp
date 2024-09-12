@@ -35,6 +35,8 @@ ABlasterCharacter::ABlasterCharacter() {
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 
 	TurningInPlace = ETurningInPlace::ETIP_NotTurning;
+	NetUpdateFrequency = 66.0f;
+	MinNetUpdateFrequency = 33.0f;
 	
 }
 
