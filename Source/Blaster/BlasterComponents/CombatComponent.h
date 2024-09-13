@@ -33,6 +33,7 @@ protected:
 
 	UFUNCTION()
 	void OnRep_EquippedWeapon();
+	void Fire();
 
 	void FireButtonPressed(bool bPressed);
 
@@ -69,7 +70,6 @@ private:
 	/*
 	 * HUD and Crosshairs
 	 */
-
 	float CrosshairVelocityFactor;
 	float CrosshairInAirFactor;
 	float CrosshairAimFactor;
@@ -82,7 +82,6 @@ private:
 	/*
 	 * Aiming and FOV
 	 */
-
 	// Field of view when not aiming; set to the camera base Fov in BeginPlay
 	float DefaultFOV;
 
@@ -95,6 +94,15 @@ private:
 	float ZoomInterpSpeed = 20.0f;
 
 	void InterpFOV(float DeltaTime);
+
+	/*
+	 * Automatic Fire
+	 */
+	FTimerHandle FireTimer;
+	bool bCanFire = true;
+
+	void StartFireTimer();
+	void FireTimerFinished();
 
 public:
 
