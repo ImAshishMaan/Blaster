@@ -29,6 +29,8 @@ public:
 	UFUNCTION(NetMulticast, Unreliable)
 	void MulticastHit();
 
+	virtual void OnRep_ReplicatedMovement() override;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -40,8 +42,11 @@ protected:
 	void CrouchButtonPressed();
 	void AimButtonPressed();
 	void AimButtonReleased();
+	void CalculateSpeed(float& Speed);
+	void CalculateAO_Pitch();
 
 	void AimOffset(float DeltaTime);
+	void SimProxiesTurn();
 	virtual void Jump() override;
 	void FireButtonPressed();
 	void FireButtonReleased();
@@ -89,6 +94,13 @@ private:
 	UPROPERTY(EditAnywhere)
 	float CameraThreshold = 200.f;
 
+	bool bRotateRootBone;
+	float TurnThreshold = 0.5f;
+	FRotator ProxyRotationLastFrame;
+	FRotator ProxyRotation;
+	float ProxyYaw;
+	float TimeSinceLastMovementReplication = 0.0f;
+
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);
 
@@ -103,5 +115,8 @@ public:
 	FVector GetHitTarget() const;
 
 	FORCEINLINE UCameraComponent* GetFollowCamera() const {return FollowCamera;}
+	FORCEINLINE bool ShouldRotateRootBone() const { return bRotateRootBone; }
 	
 };
+
+
