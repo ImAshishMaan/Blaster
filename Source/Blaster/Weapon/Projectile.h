@@ -29,6 +29,9 @@ protected:
 		const FHitResult& HitResult
 	);
 
+	UPROPERTY(EditAnywhere)
+	float Damage = 15.f;
+
 private:
 
 	UPROPERTY(EditAnywhere)
@@ -47,6 +50,8 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	USoundCue* ImpactSound;
+
+	
 
 public:
 };
