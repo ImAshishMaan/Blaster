@@ -15,7 +15,6 @@
 
 ABlasterCharacter::ABlasterCharacter() {
 	PrimaryActorTick.bCanEverTick = true;
-
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(GetMesh());
 	CameraBoom->TargetArmLength = 600.0f;
@@ -378,11 +377,23 @@ void ABlasterCharacter::UpdateHUDHealth() {
 	}
 }
 
-void ABlasterCharacter::Elim_Implementation() {
+void ABlasterCharacter::Elim() {
+	MulticastElim();
+	GetWorldTimerManager().SetTimer(ElimTimer, this, &ABlasterCharacter::ElimTimerFinished, ElimDelay);
+}
+
+void ABlasterCharacter::MulticastElim_Implementation() {
 	bElimmed = true;
 	PlayElimMontage();
 }
 
+void ABlasterCharacter::ElimTimerFinished() {
+	ABlasterGameMode* BlasterGameMode = GetWorld()->GetAuthGameMode<ABlasterGameMode>();
+	if(BlasterGameMode) {
+		BlasterGameMode->RequestRespawn(this, Controller);
+	}
+	
+}
 
 void ABlasterCharacter::SetOverlappingWeapon(AWeapon* Weapon) {
 	if(OverlappingWeapon) {

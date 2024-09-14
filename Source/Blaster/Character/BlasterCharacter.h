@@ -26,9 +26,11 @@ public:
 	void PlayFireMontage(bool bAiming);
 	virtual void OnRep_ReplicatedMovement() override;
 	void UpdateHUDHealth();
-
-	UFUNCTION(NetMulticast, Reliable)
+	
 	void Elim();
+	
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastElim();
 	void PlayElimMontage();
 
 protected:
@@ -122,6 +124,14 @@ private:
 	ABlasterPlayerController* BlasterPlayerController;
 
 	bool bElimmed = false;
+
+	FTimerHandle ElimTimer;
+
+	UPROPERTY(EditDefaultsOnly)
+	float ElimDelay = 3.0f;
+	
+	void ElimTimerFinished();
+	
 	
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);
