@@ -2,6 +2,7 @@
 
 #include "Blaster/Blaster.h"
 #include "Blaster/BlasterComponents/CombatComponent.h"
+#include "Blaster/PlayerController/BlasterPlayerController.h"
 #include "Blaster/Weapon/Weapon.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -49,6 +50,7 @@ void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME_CONDITION(ABlasterCharacter, OverlappingWeapon, COND_OwnerOnly);
+	DOREPLIFETIME(ABlasterCharacter, Health);
 }
 
 void ABlasterCharacter::PostInitializeComponents() {
@@ -111,6 +113,11 @@ void ABlasterCharacter::OnRep_ReplicatedMovement() {
 
 void ABlasterCharacter::BeginPlay() {
 	Super::BeginPlay();
+	
+	BlasterPlayerController = Cast<ABlasterPlayerController>(Controller);
+	if(BlasterPlayerController) {
+		BlasterPlayerController->SetHUDHealth(Health, MaxHealth);
+	}
 }
 
 void ABlasterCharacter::Tick(float DeltaTime) {
@@ -336,6 +343,10 @@ void ABlasterCharacter::HideCameraIfCharacterClose() {
 			Combat->EquippedWeapon->GetWeaponMesh()->bOwnerNoSee = false;
 		}
 	}
+}
+
+void ABlasterCharacter::OnRep_Health() {
+	
 }
 
 void ABlasterCharacter::SetOverlappingWeapon(AWeapon* Weapon) {

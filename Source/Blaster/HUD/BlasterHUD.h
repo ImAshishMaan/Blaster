@@ -4,6 +4,7 @@
 #include "GameFramework/HUD.h"
 #include "BlasterHUD.generated.h"
 
+class UCharacterOverlayWidget;
 class UTexture2D;
 
 USTRUCT(BlueprintType)
@@ -32,6 +33,16 @@ class BLASTER_API ABlasterHUD : public AHUD {
 public:
 
 	virtual void DrawHUD() override;
+
+	UPROPERTY(EditAnywhere, Category = "Player Stats")
+	TSubclassOf<UUserWidget> CharacterOverlayClass;
+
+	UCharacterOverlayWidget* CharacterOverlay;
+
+protected:
+
+	virtual void BeginPlay() override;
+	void AddCharacterOverlay();
 
 private:
 
