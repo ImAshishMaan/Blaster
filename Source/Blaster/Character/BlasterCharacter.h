@@ -21,14 +21,15 @@ public:
 	ABlasterCharacter();
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
 	virtual void PostInitializeComponents() override;
 	void PlayFireMontage(bool bAiming);
-
 	virtual void OnRep_ReplicatedMovement() override;
 	void UpdateHUDHealth();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Elim();
+	void PlayElimMontage();
 
 protected:
 	virtual void BeginPlay() override;
@@ -90,6 +91,9 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	UAnimMontage* HitReactMontage;
 
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	UAnimMontage* ElimMontage;
+
 	void PlayHitReactMontage();
 
 	void HideCameraIfCharacterClose();
@@ -116,6 +120,8 @@ private:
 	void OnRep_Health();
 
 	ABlasterPlayerController* BlasterPlayerController;
+
+	bool bElimmed = false;
 	
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);
@@ -132,6 +138,7 @@ public:
 
 	FORCEINLINE UCameraComponent* GetFollowCamera() const {return FollowCamera;}
 	FORCEINLINE bool ShouldRotateRootBone() const { return bRotateRootBone; }
+	FORCEINLINE bool IsElimmed() const { return bElimmed; }
 	
 };
 

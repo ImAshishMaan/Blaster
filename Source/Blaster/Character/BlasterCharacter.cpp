@@ -2,6 +2,7 @@
 
 #include "Blaster/Blaster.h"
 #include "Blaster/BlasterComponents/CombatComponent.h"
+#include "Blaster/GameMode/BlasterGameMode.h"
 #include "Blaster/PlayerController/BlasterPlayerController.h"
 #include "Blaster/Weapon/Weapon.h"
 #include "Camera/CameraComponent.h"
@@ -68,6 +69,14 @@ void ABlasterCharacter::PlayFireMontage(bool bAiming) {
 		AnimInstance->Montage_Play(FireWeaponMontage);
 		FName SectionName = bAiming ? FName("RifleAim") : FName("RifleHip");
 		AnimInstance->Montage_JumpToSection(SectionName);
+	}
+}
+
+void ABlasterCharacter::PlayElimMontage() {
+
+	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
+	if(AnimInstance && ElimMontage) {
+		AnimInstance->Montage_Play(ElimMontage);
 	}
 }
 
@@ -254,7 +263,7 @@ void ABlasterCharacter::SimProxiesTurn() {
 	ProxyRotation = GetActorRotation();
 	ProxyYaw = UKismetMathLibrary::NormalizedDeltaRotator(ProxyRotation, ProxyRotationLastFrame).Yaw;
 
-	UE_LOG(LogTemp, Warning, TEXT("Proxy Rotation: %f"), ProxyYaw);
+	//UE_LOG(LogTemp, Warning, TEXT("Proxy Rotation: %f"), ProxyYaw);
 
 	if(FMath::Abs(ProxyYaw) > TurnThreshold) {
 		if(ProxyYaw > TurnThreshold) {
@@ -344,6 +353,15 @@ void ABlasterCharacter::ReceiveDamage(AActor* DamagedActor, float Damage, const 
 	Health = FMath::Clamp(Health - Damage, 0.0f, MaxHealth);
 	PlayHitReactMontage();
 	UpdateHUDHealth();
+
+	if(Health == 0.0f) {
+		ABlasterGameMode* BlasterGameMode = GetWorld()->GetAuthGameMode<ABlasterGameMode>();
+		if(BlasterGameMode) {
+			BlasterPlayerController = BlasterPlayerController == nullptr ? Cast<ABlasterPlayerController>(Controller) : BlasterPlayerController;
+			ABlasterPlayerController* AttackerController = Cast<ABlasterPlayerController>(GetInstigatorController());
+			BlasterGameMode->PlayerEliminated(this, BlasterPlayerController, AttackerController);
+		}
+	}
 	
 }
 
@@ -359,6 +377,12 @@ void ABlasterCharacter::UpdateHUDHealth() {
 		BlasterPlayerController->SetHUDHealth(Health, MaxHealth);
 	}
 }
+
+void ABlasterCharacter::Elim_Implementation() {
+	bElimmed = true;
+	PlayElimMontage();
+}
+
 
 void ABlasterCharacter::SetOverlappingWeapon(AWeapon* Weapon) {
 	if(OverlappingWeapon) {
