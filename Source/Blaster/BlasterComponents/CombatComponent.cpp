@@ -205,6 +205,18 @@ void UCombatComponent::EquipWeapon(AWeapon* WeaponToEquip) {
 	Character->bUseControllerRotationYaw = true;
 }
 
+void UCombatComponent::Reload() {
+	if(CarriedAmmo > 0) {
+		ServerReload();
+	}
+}
+
+void UCombatComponent::ServerReload_Implementation() {
+	if(Character == nullptr) return;
+	Character->PlayReloadMontage();
+}
+
+
 void UCombatComponent::OnRep_EquippedWeapon() {
 	if(EquippedWeapon && Character) {
 		EquippedWeapon->SetWeaponState(EWeaponState::EWS_Equipped);
@@ -272,6 +284,7 @@ void UCombatComponent::SetHUDCrosshairs(float DeltaTime) {
 		}
 	}
 }
+
 
 void UCombatComponent::InterpFOV(float DeltaTime) {
 	if(EquippedWeapon == nullptr) return;
