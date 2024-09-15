@@ -59,7 +59,7 @@ void UCombatComponent::FireButtonPressed(bool bPressed) {
 }
 
 void UCombatComponent::Fire() {
-	if(bCanFire) {
+	if(CanFire()) {
 		ServerFire(HitTarget);
 		if(EquippedWeapon) {
 			bCanFire = false;
@@ -86,6 +86,13 @@ void UCombatComponent::FireTimerFinished() {
 	if(bFIreButtonPressed && EquippedWeapon->bAutomatic) {
 		Fire();
 	}
+}
+
+bool UCombatComponent::CanFire() {
+	if(EquippedWeapon == nullptr) return false;
+
+	return !EquippedWeapon->IsEmpty() && bCanFire;
+	
 }
 
 void UCombatComponent::TraceUnderCrosshairs(FHitResult& TraceHitResult) {

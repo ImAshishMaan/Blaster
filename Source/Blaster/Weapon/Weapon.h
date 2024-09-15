@@ -145,4 +145,5 @@ public:
 
 	FORCEINLINE float GetZoomedFOV() { return ZoomedFOV; }
 	FORCEINLINE float GetZoomInterpSpeed() { return ZoomInterpSpeed; }
+	bool IsEmpty();
 };
