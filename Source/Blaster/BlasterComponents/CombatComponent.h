@@ -7,6 +7,7 @@
 
 #define TRACE_LENGTH 80000.0f;
 
+enum class EWeaponType : uint8;
 class ABlasterHUD;
 class ABlasterPlayerController;
 class AWeapon;
@@ -107,6 +108,20 @@ private:
 	void StartFireTimer();
 	void FireTimerFinished();
 	bool CanFire();
+
+	// Carried Ammo for the current equipped weapon
+	UPROPERTY(ReplicatedUsing = OnRep_CarriedAmmo)
+	int32 CarriedAmmo;
+
+	UFUNCTION()
+	void OnRep_CarriedAmmo();
+
+	TMap<EWeaponType, int32> CarriedAmmoMap;
+
+	UPROPERTY(EditAnywhere)
+	int32 StartingARAmmo = 30;
+
+	void InitializeCarriedAmmo();
 
 public:
 

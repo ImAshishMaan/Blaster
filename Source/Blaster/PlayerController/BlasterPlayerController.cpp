@@ -62,6 +62,19 @@ void ABlasterPlayerController::SetHUDWeaponAmmo(int32 Ammo) {
 	}
 }
 
+void ABlasterPlayerController::SetHUDCarriedAmmo(int32 CarriedAmmo) {
+	BlasterHUD = BlasterHUD == nullptr ? Cast<ABlasterHUD>(GetHUD()) : BlasterHUD;
+	bool bHUDValid = BlasterHUD &&
+		BlasterHUD->CharacterOverlay &&
+		BlasterHUD->CharacterOverlay->CarriedAmmoAmount;
+	
+	if(bHUDValid) {
+		BlasterHUD->CharacterOverlay->CarriedAmmoAmount->SetText(FText::AsNumber(CarriedAmmo));
+	}else {
+		UE_LOG(LogTemp, Warning, TEXT("bHUDValid is not true: %i"), bHUDValid);
+	}
+}
+
 void ABlasterPlayerController::OnPossess(APawn* InPawn) {
 	Super::OnPossess(InPawn);
 	ABlasterCharacter* BlasterCharacter = Cast<ABlasterCharacter>(InPawn);

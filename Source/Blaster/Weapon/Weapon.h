@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "WeaponTypes.h"
 #include "GameFramework/Actor.h"
 #include "Weapon.generated.h"
 
@@ -125,6 +126,9 @@ private:
 	UPROPERTY()
 	ABlasterPlayerController* BlasterOwnerController;
 
+	UPROPERTY(EditAnywhere)
+	EWeaponType WeaponType;
+
 	/*
 	 * Zoom FOV while Aiming
 	 */
@@ -146,4 +150,5 @@ public:
 	FORCEINLINE float GetZoomedFOV() { return ZoomedFOV; }
 	FORCEINLINE float GetZoomInterpSpeed() { return ZoomInterpSpeed; }
 	bool IsEmpty();
+	FORCEINLINE EWeaponType GetWeaponType() { return WeaponType; }
 };
