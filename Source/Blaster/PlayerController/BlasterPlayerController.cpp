@@ -28,6 +28,17 @@ void ABlasterPlayerController::SetHUDHealth(float Health, float MaxHealth) {
 	}
 }
 
+void ABlasterPlayerController::SetHUDScore(float Score) {
+	BlasterHUD = BlasterHUD == nullptr ? Cast<ABlasterHUD>(GetHUD()) : BlasterHUD;
+	bool bHUDValid = BlasterHUD &&
+		BlasterHUD->CharacterOverlay &&
+		BlasterHUD->CharacterOverlay->ScoreAmount;
+	if(bHUDValid) {
+		int32 ScoreInt = FMath::CeilToInt(Score);
+		BlasterHUD->CharacterOverlay->ScoreAmount->SetText(FText::AsNumber(ScoreInt));
+	}
+}
+
 void ABlasterPlayerController::OnPossess(APawn* InPawn) {
 	Super::OnPossess(InPawn);
 	ABlasterCharacter* BlasterCharacter = Cast<ABlasterCharacter>(InPawn);

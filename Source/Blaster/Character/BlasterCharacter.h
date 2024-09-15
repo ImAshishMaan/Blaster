@@ -7,6 +7,7 @@
 #include "GameFramework/Character.h"
 #include "BlasterCharacter.generated.h"
 
+class ABlasterPlayerState;
 class FOnTimelineFloat;
 class UTimelineComponent;
 class ABlasterPlayerController;
@@ -60,6 +61,9 @@ protected:
 
 	UFUNCTION()
 	void ReceiveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser);
+
+	// poll for any relevalant classes and initialize hud
+	void PollInit();
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
@@ -171,6 +175,8 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	USoundCue* ElimBotSound;
+
+	ABlasterPlayerState* BlasterPlayerState;
 	
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);
