@@ -9,7 +9,7 @@ void ABlasterGameMode::PlayerEliminated(ABlasterCharacter* ElimmedCharacter, ABl
                                         ABlasterPlayerController* AttackerController) {
 
 	ABlasterPlayerState* AttackerPlayerState = AttackerController ? Cast<ABlasterPlayerState>(AttackerController->PlayerState) : nullptr;
-	const ABlasterPlayerState* VictimPlayerState = VictimController ? Cast<ABlasterPlayerState>(VictimController->PlayerState) : nullptr;
+	ABlasterPlayerState* VictimPlayerState = VictimController ? Cast<ABlasterPlayerState>(VictimController->PlayerState) : nullptr;
 
 
 	/*if (VictimPlayerState == nullptr || AttackerPlayerState == nullptr) {
@@ -17,6 +17,9 @@ void ABlasterGameMode::PlayerEliminated(ABlasterCharacter* ElimmedCharacter, ABl
 	}*/
 	if(AttackerPlayerState && AttackerPlayerState != VictimPlayerState) {
 		AttackerPlayerState->AddToScore(15.f);
+	}
+	if(VictimPlayerState) {
+		VictimPlayerState->AddToDefeats(1);
 	}
 	
 	if(ElimmedCharacter) {
