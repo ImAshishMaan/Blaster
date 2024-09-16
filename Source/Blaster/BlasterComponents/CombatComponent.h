@@ -27,6 +27,7 @@ public:
 	void Reload();
 	UFUNCTION(BlueprintCallable)
 	void FinishReloading();
+	void UpdateAmmoValues();
 
 protected:
 	virtual void BeginPlay() override;
@@ -56,6 +57,8 @@ protected:
 	void ServerReload();
 
 	void HandleReload();
+
+	int32 AmountToReload();
 
 private:
 	UPROPERTY()

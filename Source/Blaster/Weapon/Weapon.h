@@ -37,6 +37,7 @@ public:
 	virtual void Fire(const FVector& HitTarget);
 	void Dropped();
 	void SetHUDAmmo();
+	void AddAmmo(int32 AmmoToAdd);
 
 	/*
 	 * Texture for the weapon crosshairs
@@ -151,4 +152,6 @@ public:
 	FORCEINLINE float GetZoomInterpSpeed() { return ZoomInterpSpeed; }
 	bool IsEmpty();
 	FORCEINLINE EWeaponType GetWeaponType() { return WeaponType; }
+	FORCEINLINE int32 GetAmmo() const { return Ammo; }
+	FORCEINLINE int32 GetMagCapacity() const { return MagCapacity; }
 };
