@@ -10,6 +10,7 @@
 #include "Net/UnrealNetwork.h"
 #include "TimerManager.h"
 #include "Blaster/Weapon/WeaponTypes.h"
+#include "Sound/SoundCue.h"
 
 UCombatComponent::UCombatComponent() {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -91,6 +92,9 @@ void UCombatComponent::FireTimerFinished() {
 	bCanFire = true;
 	if(bFIreButtonPressed && EquippedWeapon->bAutomatic) {
 		Fire();
+	}
+	if(EquippedWeapon->IsEmpty()) {
+		Reload();
 	}
 }
 
@@ -202,6 +206,14 @@ void UCombatComponent::EquipWeapon(AWeapon* WeaponToEquip) {
 	if(Controller) {
 		Controller->SetHUDCarriedAmmo(CarriedAmmo);
 	}
+
+	if(EquippedWeapon->EquipSound) {
+		UGameplayStatics::PlaySoundAtLocation(this, EquippedWeapon->EquipSound, Character->GetActorLocation());
+	}
+
+	if(EquippedWeapon->IsEmpty()) {
+		Reload();
+	}
 	
 	Character->GetCharacterMovement()->bOrientRotationToMovement = false;
 	Character->bUseControllerRotationYaw = true;
@@ -219,6 +231,7 @@ void UCombatComponent::FinishReloading() {
 		CombatState = ECombatState::ECS_Unoccupied;
 		UpdateAmmoValues();
 	}
+	
 	if(bFIreButtonPressed) {
 		Fire();
 	}
@@ -286,6 +299,11 @@ void UCombatComponent::OnRep_EquippedWeapon() {
 		}
 		Character->GetCharacterMovement()->bOrientRotationToMovement = false;
 		Character->bUseControllerRotationYaw = true;
+
+		if(EquippedWeapon->EquipSound) {
+			UGameplayStatics::PlaySoundAtLocation(this, EquippedWeapon->EquipSound, Character->GetActorLocation());
+		}
+		
 	}
 }
 
