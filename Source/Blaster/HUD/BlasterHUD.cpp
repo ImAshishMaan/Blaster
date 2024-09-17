@@ -12,10 +12,10 @@ void ABlasterHUD::BeginPlay() {
 void ABlasterHUD::InitOverlays() {
 	APlayerController* PlayerController = GetOwningPlayerController();
 	if(PlayerController) {
-		if(CharacterOverlayClass) {
+		if(CharacterOverlayClass && CharacterOverlay == nullptr) {
 			CharacterOverlay = CreateWidget<UCharacterOverlayWidget>(PlayerController, CharacterOverlayClass);
 		}
-		if(AnnouncementOverlayClass) {
+		if(AnnouncementOverlayClass && AnnouncementOverlay == nullptr) {
 			AnnouncementOverlay = CreateWidget<UAnnouncementWidget>(PlayerController, AnnouncementOverlayClass);
 		}
 	}

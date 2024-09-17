@@ -177,8 +177,6 @@ void ABlasterPlayerController::HandleMatchHasStarted() {
 	if(BlasterHUD) {
 		BlasterHUD->AddCharacterOverlay();
 		if(BlasterHUD->AnnouncementOverlay && BlasterHUD->AnnouncementOverlay->IsInViewport()) {
-			UE_LOG(LogTemp, Warning, TEXT("AnnouncementOverlay already exists"));
-			//BlasterHUD->AnnouncementOverlay->RemoveFromParent();
 			BlasterHUD->AnnouncementOverlay->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
