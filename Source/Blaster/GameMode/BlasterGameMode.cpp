@@ -5,27 +5,42 @@
 #include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
 
+ABlasterGameMode::ABlasterGameMode() {
+	bDelayedStart = true;
+}
+
+void ABlasterGameMode::BeginPlay() {
+	Super::BeginPlay();
+
+	LevelStartingTime = GetWorld()->GetTimeSeconds();
+}
+
+void ABlasterGameMode::Tick(float DeltaSeconds) {
+	Super::Tick(DeltaSeconds);
+
+	if(MatchState == MatchState::WaitingToStart) {
+		CountdownTime += DeltaSeconds;
+		if(CountdownTime >= WarmupTime) {
+			StartMatch();
+		}
+	}
+}
+
 void ABlasterGameMode::PlayerEliminated(ABlasterCharacter* ElimmedCharacter, ABlasterPlayerController* VictimController,
                                         ABlasterPlayerController* AttackerController) {
 
 	ABlasterPlayerState* AttackerPlayerState = AttackerController ? Cast<ABlasterPlayerState>(AttackerController->PlayerState) : nullptr;
 	ABlasterPlayerState* VictimPlayerState = VictimController ? Cast<ABlasterPlayerState>(VictimController->PlayerState) : nullptr;
 
-
-	/*if (VictimPlayerState == nullptr || AttackerPlayerState == nullptr) {
-		UE_LOG(LogTemp, Warning, TEXT("PlayerEliminated VictimPlayerState == nullptr || AttackerPlayerState == nullptr"));
-	}*/
 	if(AttackerPlayerState && AttackerPlayerState != VictimPlayerState) {
 		AttackerPlayerState->AddToScore(15.f);
 	}
 	if(VictimPlayerState) {
 		VictimPlayerState->AddToDefeats(1);
 	}
-	
 	if(ElimmedCharacter) {
 		ElimmedCharacter->Elim();
 	}
-	
 }
 
 void ABlasterGameMode::RequestRespawn(ACharacter* ElimmedCharacter, AController* ElimmedController) {
@@ -43,3 +58,4 @@ void ABlasterGameMode::RequestRespawn(ACharacter* ElimmedCharacter, AController*
 	}
 	
 }
+
