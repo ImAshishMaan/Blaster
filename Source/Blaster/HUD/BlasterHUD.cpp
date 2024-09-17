@@ -1,19 +1,39 @@
 #include "BlasterHUD.h"
+#include "AnnouncementWidget.h"
 #include "GameFramework/PlayerController.h"
 #include "CharacterOverlayWidget.h"
+
 
 void ABlasterHUD::BeginPlay() {
 	Super::BeginPlay();
 	
+	InitOverlays();
+}
+void ABlasterHUD::InitOverlays() {
 	APlayerController* PlayerController = GetOwningPlayerController();
-	if(PlayerController && CharacterOverlayClass) {
-		CharacterOverlay = CreateWidget<UCharacterOverlayWidget>(PlayerController, CharacterOverlayClass);
+	if(PlayerController) {
+		if(CharacterOverlayClass) {
+			CharacterOverlay = CreateWidget<UCharacterOverlayWidget>(PlayerController, CharacterOverlayClass);
+		}
+		if(AnnouncementOverlayClass) {
+			AnnouncementOverlay = CreateWidget<UAnnouncementWidget>(PlayerController, AnnouncementOverlayClass);
+		}
 	}
 }
 
 void ABlasterHUD::AddCharacterOverlay() {
-	if(CharacterOverlayClass) {
+	if(CharacterOverlay) {
 		CharacterOverlay->AddToViewport();
+	}
+}
+void ABlasterHUD::AddAnnouncementOverlay() {
+	if(AnnouncementOverlay) {
+		AnnouncementOverlay->AddToViewport();
+	}else {
+		if(AnnouncementOverlayClass) {
+			AnnouncementOverlay = CreateWidget<UAnnouncementWidget>(GetOwningPlayerController(), AnnouncementOverlayClass);
+			AnnouncementOverlay->AddToViewport();
+		}
 	}
 }
 
@@ -53,6 +73,7 @@ void ABlasterHUD::DrawHUD() {
 		}
 	}
 }
+
 
 void ABlasterHUD::DrawCrosshairs(UTexture2D* Texture, FVector2D ViewportCenter, FVector2D Spread, FLinearColor CrosshairsColor) {
 	const float TextureWidth = Texture->GetSizeX();

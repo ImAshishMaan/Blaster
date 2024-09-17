@@ -1,5 +1,4 @@
 #include "BlasterPlayerController.h"
-
 #include "Blaster/Character/BlasterCharacter.h"
 #include "Blaster/HUD/BlasterHUD.h"
 #include "Blaster/HUD/CharacterOverlayWidget.h"
@@ -13,6 +12,9 @@ void ABlasterPlayerController::BeginPlay() {
 	Super::BeginPlay();
 
 	BlasterHUD = Cast<ABlasterHUD>(GetHUD());
+	if(BlasterHUD) {
+		BlasterHUD->AddAnnouncementOverlay();
+	}
 }
 
 void ABlasterPlayerController::Tick(float DeltaTime) {
@@ -81,8 +83,6 @@ void ABlasterPlayerController::SetHUDWeaponAmmo(int32 Ammo) {
 	
 	if(bHUDValid) {
 		BlasterHUD->CharacterOverlay->WeaponAmmoAmount->SetText(FText::AsNumber(Ammo));
-	}else {
-		UE_LOG(LogTemp, Warning, TEXT("bHUDValid is not true: %i"), bHUDValid);
 	}
 }
 
@@ -94,8 +94,6 @@ void ABlasterPlayerController::SetHUDCarriedAmmo(int32 CarriedAmmo) {
 	
 	if(bHUDValid) {
 		BlasterHUD->CharacterOverlay->CarriedAmmoAmount->SetText(FText::AsNumber(CarriedAmmo));
-	}else {
-		UE_LOG(LogTemp, Warning, TEXT("bHUDValid is not true: %i"), bHUDValid);
 	}
 }
 
@@ -114,8 +112,6 @@ void ABlasterPlayerController::SetHUDMatchCountdown(float CountdownTime) {
 			FString CountdownText = FString::Printf(TEXT("%02d:%02d"), Minutes, Seconds);
 			BlasterHUD->CharacterOverlay->MatchCountdownText->SetText(FText::FromString(CountdownText));
 		}
-	}else {
-		UE_LOG(LogTemp, Warning, TEXT("bHUDValid is not true: %i"), bHUDValid);
 	}
 }
 
@@ -166,19 +162,24 @@ void ABlasterPlayerController::OnMatchStateSet(FName State) {
 	MatchState = State;
 	
 	if(MatchState == MatchState::InProgress) {
-		BlasterHUD = BlasterHUD == nullptr ? Cast<ABlasterHUD>(GetHUD()) : BlasterHUD;
-		if(BlasterHUD) {
-			BlasterHUD->AddCharacterOverlay();
-		}
+		HandleMatchHasStarted();
 	}
 }
 
 void ABlasterPlayerController::OnRep_MatchState() {
-	
 	if(MatchState == MatchState::InProgress) {
-		BlasterHUD = BlasterHUD == nullptr ? Cast<ABlasterHUD>(GetHUD()) : BlasterHUD;
-		if(BlasterHUD) {
-			BlasterHUD->AddCharacterOverlay();
+		HandleMatchHasStarted();
+	}
+}
+
+void ABlasterPlayerController::HandleMatchHasStarted() {
+	BlasterHUD = BlasterHUD == nullptr ? Cast<ABlasterHUD>(GetHUD()) : BlasterHUD;
+	if(BlasterHUD) {
+		BlasterHUD->AddCharacterOverlay();
+		if(BlasterHUD->AnnouncementOverlay && BlasterHUD->AnnouncementOverlay->IsInViewport()) {
+			UE_LOG(LogTemp, Warning, TEXT("AnnouncementOverlay already exists"));
+			//BlasterHUD->AnnouncementOverlay->RemoveFromParent();
+			BlasterHUD->AnnouncementOverlay->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AnnouncementWidget.h"
 #include "GameFramework/HUD.h"
 #include "BlasterHUD.generated.h"
 
@@ -34,12 +35,25 @@ public:
 
 	virtual void DrawHUD() override;
 
+	void InitOverlays(); // Initialize all overlays on BeginPlay
+
 	UPROPERTY(EditAnywhere, Category = "Player Stats")
 	TSubclassOf<UUserWidget> CharacterOverlayClass;
-	void AddCharacterOverlay();
 
 	UPROPERTY()
 	UCharacterOverlayWidget* CharacterOverlay;
+
+	UPROPERTY(EditAnywhere, Category = "Player Stats")
+	TSubclassOf<UUserWidget> AnnouncementOverlayClass;
+
+	UPROPERTY()
+	UAnnouncementWidget* AnnouncementOverlay;
+	
+	/*
+	 * Add Character Overlay to the viewport
+	 */
+	void AddCharacterOverlay();
+	void AddAnnouncementOverlay();
 
 protected:
 
