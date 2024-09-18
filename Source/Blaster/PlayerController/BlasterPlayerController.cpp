@@ -3,8 +3,10 @@
 #include "Blaster/BlasterComponents/CombatComponent.h"
 #include "Blaster/Character/BlasterCharacter.h"
 #include "Blaster/GameMode/BlasterGameMode.h"
+#include "Blaster/GameState/BlasterGameState.h"
 #include "Blaster/HUD/BlasterHUD.h"
 #include "Blaster/HUD/CharacterOverlayWidget.h"
+#include "Blaster/PlayerState/BlasterPlayerState.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
 #include "GameFramework/GameMode.h"
@@ -258,7 +260,25 @@ void ABlasterPlayerController::HandleCooldown() {
 			
 			BlasterHUD->AnnouncementOverlay->AnnouncementText->SetText(FText::FromString(TEXT("New Match Starts In:")));
 
-			BlasterHUD->AnnouncementOverlay->InfoText->SetText(FText::FromString(TEXT("Get ready Again!")));
+			ABlasterGameState* BlasterGameState = Cast<ABlasterGameState>(GetWorld()->GetGameState());
+			ABlasterPlayerState* BlasterPlayerState = GetPlayerState<ABlasterPlayerState>();
+			if(BlasterGameState && BlasterPlayerState) {
+				TArray<ABlasterPlayerState*> TopPlayers = BlasterGameState->TopScoringPlayers;
+				FString InfoTextString;
+				if(TopPlayers.Num() == 0) {
+					InfoTextString = FString("No Players To Report");
+				}else if(TopPlayers.Num() == 1 && TopPlayers[0] == BlasterPlayerState) {
+					InfoTextString = FString("You Are The Top Player");
+				}else if(TopPlayers.Num() == 1) {
+					InfoTextString = FString::Printf(TEXT("Winner: \n%s"), *TopPlayers[0]->GetPlayerName());
+				}else if(TopPlayers.Num() > 1) {
+					InfoTextString = FString("Top Players: \n");
+					for(ABlasterPlayerState* TopPlayer : TopPlayers) {
+						InfoTextString.Append(FString::Printf(TEXT("%s\n"), *TopPlayer->GetPlayerName()));
+					}
+				}
+				BlasterHUD->AnnouncementOverlay->InfoText->SetText(FText::FromString(InfoTextString));
+			}
 		}
 	}
 	ABlasterCharacter* BlasterCharacter = Cast<ABlasterCharacter>(GetPawn());
