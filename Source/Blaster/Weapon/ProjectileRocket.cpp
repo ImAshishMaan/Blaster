@@ -6,11 +6,17 @@
 #include "Components/BoxComponent.h"
 #include "Components/AudioComponent.h"
 #include "NiagaraSystemInstanceController.h"
+#include "RocketMovementComponent.h"
 
 AProjectileRocket::AProjectileRocket() {
 	RocketMesh = CreateDefaultSubobject<UStaticMeshComponent>("RocketMesh");
 	RocketMesh->SetupAttachment(RootComponent);
 	RocketMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	RocketMovementComponent = CreateDefaultSubobject<URocketMovementComponent>("RocketMovementComponent");
+	RocketMovementComponent->bRotationFollowsVelocity = true;
+	RocketMovementComponent->SetIsReplicated(true);
+	
 }
 
 void AProjectileRocket::BeginPlay() {
@@ -57,8 +63,11 @@ void AProjectileRocket::DestroyTimerFinished() {
 
 void AProjectileRocket::OnHit(UPrimitiveComponent* HitComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
                               FVector NormalImpulse, const FHitResult& HitResult) {
+	if(OtherActor == GetOwner()) {
+		return;
+	}
+	
 	APawn* FiringPawn = Cast<APawn>(GetOwner());
-
 	if(FiringPawn && HasAuthority()) {
 		APlayerController* FiringController = Cast<APlayerController>(FiringPawn->GetController());
 		if(FiringController) {
