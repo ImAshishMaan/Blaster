@@ -14,6 +14,7 @@ class BLASTER_API AProjectile : public AActor {
 public:
 	AProjectile();
 	virtual void Tick(float DeltaTime) override;
+	void ShowImpactParticles();
 
 	virtual void Destroyed() override;
 
@@ -32,10 +33,16 @@ protected:
 	UPROPERTY(EditAnywhere)
 	float Damage = 15.f;
 
-private:
+	UPROPERTY(EditAnywhere)
+	UParticleSystem* ImpactParticles;
+
+	UPROPERTY(EditAnywhere)
+	USoundCue* ImpactSound;
 
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* CollisionBox;
+	
+private:
 
 	UPROPERTY(EditAnywhere)
 	UProjectileMovementComponent* ProjectileMovement;
@@ -45,14 +52,6 @@ private:
 
 	UPROPERTY()
 	UParticleSystemComponent* TracerComponent;
-
-	UPROPERTY(EditAnywhere)
-	UParticleSystem* ImpactParticles;
-
-	UPROPERTY(EditAnywhere)
-	USoundCue* ImpactSound;
-
-	
 
 public:
 };

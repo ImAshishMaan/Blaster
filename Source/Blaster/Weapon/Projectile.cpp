@@ -54,12 +54,16 @@ void AProjectile::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 }
 
-void AProjectile::Destroyed() {
-	Super::Destroyed();
+void AProjectile::ShowImpactParticles() {
 	if(ImpactParticles) {
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticles, GetActorLocation(), FRotator(0.0f), true);
 	}
 	if(ImpactSound) {
 		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation());
 	}
+}
+
+void AProjectile::Destroyed() {
+	Super::Destroyed();
+	ShowImpactParticles();
 }
