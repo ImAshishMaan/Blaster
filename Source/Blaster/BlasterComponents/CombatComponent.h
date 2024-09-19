@@ -6,8 +6,6 @@
 #include "Components/ActorComponent.h"
 #include "CombatComponent.generated.h"
 
-#define TRACE_LENGTH 80000.0f;
-
 enum class EWeaponType : uint8;
 class ABlasterHUD;
 class ABlasterPlayerController;
@@ -140,6 +138,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	int32 StartingSMGAmmo = 5;
+
+	UPROPERTY(EditAnywhere)
+	int32 StartingShotgunAmmo = 0;
 
 	void InitializeCarriedAmmo();
 
