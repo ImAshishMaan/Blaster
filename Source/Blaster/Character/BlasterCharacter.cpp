@@ -49,7 +49,6 @@ ABlasterCharacter::ABlasterCharacter() {
 	MinNetUpdateFrequency = 33.0f;
 
 	DissolveTimeline = CreateDefaultSubobject<UTimelineComponent>("DissolveTimeline");
-	
 }
 
 void ABlasterCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const {
@@ -86,7 +85,7 @@ void ABlasterCharacter::PlayReloadMontage() {
 	if(AnimInstance && ReloadMontage) {
 		AnimInstance->Montage_Play(ReloadMontage);
 		FName SectionName;
-		
+
 		switch(Combat->EquippedWeapon->GetWeaponType()) {
 		case EWeaponType::EWT_AssaultRifle:
 			SectionName = FName("Rifle");
@@ -103,16 +102,18 @@ void ABlasterCharacter::PlayReloadMontage() {
 		case EWeaponType::EWT_Shotgun:
 			SectionName = FName("Rifle");
 			break;
+		case EWeaponType::EWT_SniperRifle:
+			SectionName = FName("Rifle");
+			break;
 		default: ;
 		}
-		
+
 		AnimInstance->Montage_JumpToSection(SectionName);
 	}
 }
 
 
 void ABlasterCharacter::PlayElimMontage() {
-
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	if(AnimInstance && ElimMontage) {
 		AnimInstance->Montage_Play(ElimMontage);
@@ -121,11 +122,10 @@ void ABlasterCharacter::PlayElimMontage() {
 
 void ABlasterCharacter::Destroyed() {
 	Super::Destroyed();
-	
+
 	if(ElimBotComponent) {
 		ElimBotComponent->DestroyComponent();
 	}
-	
 }
 
 void ABlasterCharacter::PlayHitReactMontage() {
@@ -367,7 +367,7 @@ void ABlasterCharacter::FireButtonReleased() {
 }
 
 void ABlasterCharacter::ReloadButtonPressed() {
-	if(bDisableGameplay) return;	
+	if(bDisableGameplay) return;
 	if(Combat) {
 		Combat->Reload();
 	}
@@ -432,12 +432,12 @@ void ABlasterCharacter::ReceiveDamage(AActor* DamagedActor, float Damage, const 
 	if(Health == 0.0f) {
 		ABlasterGameMode* BlasterGameMode = GetWorld()->GetAuthGameMode<ABlasterGameMode>();
 		if(BlasterGameMode) {
-			BlasterPlayerController = BlasterPlayerController == nullptr ? Cast<ABlasterPlayerController>(Controller) : BlasterPlayerController;
+			BlasterPlayerController = BlasterPlayerController == nullptr ? Cast<ABlasterPlayerController>(Controller) :
+				                          BlasterPlayerController;
 			ABlasterPlayerController* AttackerController = Cast<ABlasterPlayerController>(InstigatedBy);
 			BlasterGameMode->PlayerEliminated(this, BlasterPlayerController, AttackerController);
 		}
 	}
-	
 }
 
 void ABlasterCharacter::PollInit() {
@@ -449,7 +449,6 @@ void ABlasterCharacter::PollInit() {
 		}
 	}
 }
-
 
 
 void ABlasterCharacter::OnRep_Health() {
@@ -474,13 +473,12 @@ void ABlasterCharacter::Elim() {
 }
 
 void ABlasterCharacter::MulticastElim_Implementation() {
-
 	if(BlasterPlayerController) {
 		BlasterPlayerController->SetHUDWeaponAmmo(0);
 	}
 	bElimmed = true;
 	PlayElimMontage();
-	
+
 	// Start Dissolve Effect
 	if(DisolveMaterialInstance) {
 		DynamicDisolveMaterialInstance = UMaterialInstanceDynamic::Create(DisolveMaterialInstance, this);
@@ -504,11 +502,17 @@ void ABlasterCharacter::MulticastElim_Implementation() {
 	// Spawn Elim Bot
 	if(ElimBotEffect) {
 		FVector ElimBotSpawnPoint(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z + 200.0f);
-		ElimBotComponent = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ElimBotEffect, ElimBotSpawnPoint, GetActorLocation().Rotation());
+		ElimBotComponent = UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ElimBotEffect, ElimBotSpawnPoint,
+		                                                            GetActorLocation().Rotation());
 
 		if(ElimBotSound) {
 			UGameplayStatics::SpawnSoundAtLocation(this, ElimBotSound, GetActorLocation());
 		}
+	}
+
+	if(IsLocallyControlled() && Combat && Combat->bAiming && Combat->EquippedWeapon && Combat->EquippedWeapon->
+		GetWeaponType() == EWeaponType::EWT_SniperRifle) {
+		ShowSniperScopeWidget(false);
 	}
 }
 
@@ -517,7 +521,6 @@ void ABlasterCharacter::ElimTimerFinished() {
 	if(BlasterGameMode) {
 		BlasterGameMode->RequestRespawn(this, Controller);
 	}
-
 }
 
 void ABlasterCharacter::UpdateDissolveMaterial(float DissolveValue) {
@@ -525,6 +528,7 @@ void ABlasterCharacter::UpdateDissolveMaterial(float DissolveValue) {
 		DynamicDisolveMaterialInstance->SetScalarParameterValue(TEXT("Dissolve"), DissolveValue);
 	}
 }
+
 void ABlasterCharacter::StartDissolve() {
 	DissolveTrack.BindDynamic(this, &ABlasterCharacter::UpdateDissolveMaterial);
 	if(DissolveCurve && DissolveTimeline) {
@@ -570,5 +574,4 @@ FVector ABlasterCharacter::GetHitTarget() const {
 ECombatState ABlasterCharacter::GetCombatState() const {
 	if(Combat == nullptr) return ECombatState::ECS_MAX;
 	return Combat->CombatState;
-	
 }
