@@ -409,7 +409,11 @@ void ABlasterCharacter::TurnInPlace(float DeltaTime) {
 
 void ABlasterCharacter::ServerEquipButtonPressed_Implementation() {
 	if(Combat) {
-		Combat->EquipWeapon(OverlappingWeapon);
+		if(OverlappingWeapon) {
+			Combat->EquipWeapon(OverlappingWeapon);
+		} else {
+			Combat->SwapWeapons();
+		}
 	}
 }
 
@@ -534,7 +538,7 @@ void ABlasterCharacter::Elim() {
 	if(Combat && Combat->EquippedWeapon) {
 		if(Combat->EquippedWeapon->bDestroyWeapon) {
 			Combat->EquippedWeapon->Destroy();
-		}else {
+		} else {
 			Combat->EquippedWeapon->Dropped();
 		}
 	}
