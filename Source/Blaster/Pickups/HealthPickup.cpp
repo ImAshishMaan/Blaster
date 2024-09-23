@@ -8,9 +8,6 @@
 
 AHealthPickup::AHealthPickup() {
 	bReplicates = true;
-
-	PickupEffectComponent = CreateDefaultSubobject<UNiagaraComponent>("PickupEffectComponent");
-	PickupEffectComponent->SetupAttachment(RootComponent);
 }
 
 void AHealthPickup::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -23,20 +20,9 @@ void AHealthPickup::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AA
 		UBuffComponent* Buff = BlasterCharacter->GetBuff();
 		if(Buff) {
 			Buff->Heal(HealAmount, HealingTime);
-			UE_LOG(LogTemp, Warning, TEXT("Buff->Heal"));
 		}
 	}
 
 	Destroy();
 }
 
-void AHealthPickup::Destroyed() {
-	if(PickupEffect) {
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(
-			this,
-			PickupEffect,
-			GetActorLocation()
-		);
-	}
-	Super::Destroyed();
-}

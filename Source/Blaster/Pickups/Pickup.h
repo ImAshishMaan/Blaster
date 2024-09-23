@@ -4,6 +4,8 @@
 #include "GameFramework/Actor.h"
 #include "Pickup.generated.h"
 
+class UNiagaraSystem;
+class UNiagaraComponent;
 class USoundCue;
 class USphereComponent;
 
@@ -33,6 +35,12 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* PickupMesh;
+
+	UPROPERTY(VisibleAnywhere)
+	UNiagaraComponent* PickupEffectComponent;
+
+	UPROPERTY(EditAnywhere)
+	UNiagaraSystem* PickupEffect;
 
 	UPROPERTY(EditAnywhere)
 	USoundCue* PickupSound;
