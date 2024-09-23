@@ -33,6 +33,7 @@ public:
 	void PlayReloadMontage();
 	virtual void OnRep_ReplicatedMovement() override;
 	void UpdateHUDHealth();
+	void UpdateHUDShield();
 	
 	void Elim();
 	
@@ -148,6 +149,19 @@ private:
 	UFUNCTION()
 	void OnRep_Health(float OldHealth);
 
+	/*
+	 * Player Shield
+	 */
+
+	UPROPERTY(EditAnywhere, Category = "Player Stats")
+	float MaxShield = 100;
+
+	UPROPERTY(ReplicatedUsing = OnRep_Shield, VisibleAnywhere, Category = "Player Stats")
+	float Shield = 100;
+
+	UFUNCTION()
+	void OnRep_Shield(float OldShield);
+	
 	UPROPERTY()
 	ABlasterPlayerController* BlasterPlayerController;
 
@@ -159,6 +173,8 @@ private:
 	float ElimDelay = 3.0f;
 	
 	void ElimTimerFinished();
+
+	
 
 	/*
 	 * Dissolve Effect

@@ -1,5 +1,4 @@
 #include "BlasterPlayerController.h"
-
 #include "Blaster/BlasterComponents/CombatComponent.h"
 #include "Blaster/Character/BlasterCharacter.h"
 #include "Blaster/GameMode/BlasterGameMode.h"
@@ -11,7 +10,6 @@
 #include "Components/TextBlock.h"
 #include "GameFramework/GameMode.h"
 #include "Net/UnrealNetwork.h"
-
 
 void ABlasterPlayerController::BeginPlay() {
 	Super::BeginPlay();
@@ -82,6 +80,21 @@ void ABlasterPlayerController::SetHUDHealth(float Health, float MaxHealth) {
 
 		FString HealthText = FString::Printf(TEXT("%d / %d"), FMath::CeilToInt(Health), FMath::CeilToInt(MaxHealth));
 		BlasterHUD->CharacterOverlay->HealthText->SetText(FText::FromString(HealthText));
+	}
+}
+
+void ABlasterPlayerController::SetHUDShield(float Shield, float MaxShield) {
+	BlasterHUD = BlasterHUD == nullptr ? Cast<ABlasterHUD>(GetHUD()) : BlasterHUD;
+	bool bHUDValid = BlasterHUD &&
+		BlasterHUD->CharacterOverlay &&
+		BlasterHUD->CharacterOverlay->ShieldBar &&
+		BlasterHUD->CharacterOverlay->ShieldText;
+	if(bHUDValid) {
+		const float HealthPercent = Shield / MaxShield;
+		BlasterHUD->CharacterOverlay->ShieldBar->SetPercent(HealthPercent);
+
+		FString HealthText = FString::Printf(TEXT("%d / %d"), FMath::CeilToInt(Shield), FMath::CeilToInt(MaxShield));
+		BlasterHUD->CharacterOverlay->ShieldText->SetText(FText::FromString(HealthText));
 	}
 }
 
