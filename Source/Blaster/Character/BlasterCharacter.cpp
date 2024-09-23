@@ -3,6 +3,7 @@
 #include "TimerManager.h"
 #include "Animation/AnimInstance.h"
 #include "Blaster/Blaster.h"
+#include "Blaster/BlasterComponents/BuffComponent.h"
 #include "Blaster/BlasterComponents/CombatComponent.h"
 #include "Blaster/GameMode/BlasterGameMode.h"
 #include "Blaster/PlayerController/BlasterPlayerController.h"
@@ -42,6 +43,9 @@ ABlasterCharacter::ABlasterCharacter() {
 	Combat = CreateDefaultSubobject<UCombatComponent>("CombatComponent");
 	Combat->SetIsReplicated(true);
 
+	Buff = CreateDefaultSubobject<UBuffComponent>("BuffComponent");
+	Buff->SetIsReplicated(true);
+
 	GetCharacterMovement()->NavAgentProps.bCanCrouch = true;
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
@@ -69,6 +73,9 @@ void ABlasterCharacter::PostInitializeComponents() {
 
 	if(Combat) {
 		Combat->Character = this;
+	}
+	if(Buff) {
+		Buff->Character = this;
 	}
 }
 
