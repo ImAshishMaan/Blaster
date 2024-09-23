@@ -40,8 +40,11 @@ protected:
 
 	UFUNCTION()
 	void OnRep_EquippedWeapon();
-	void Fire();
 
+	UFUNCTION()
+	void OnRep_SecondaryWeapon();
+	
+	void Fire();
 
 	UFUNCTION(Server, Reliable)
 	void ServerFire(const FVector_NetQuantize& TraceHitTarget);
@@ -50,15 +53,18 @@ protected:
 	void MulticastFire(const FVector_NetQuantize& TraceHitTarget);
 
 	void TraceUnderCrosshairs(FHitResult& TraceHitResult);
-
 	void SetHUDCrosshairs(float DeltaTime);
 
 	UFUNCTION(Server, Reliable)
 	void ServerReload();
 
 	void HandleReload();
-
 	int32 AmountToReload();
+
+	void EquipPrimaryWeapon(AWeapon* WeaponToEquip);
+	void EquipSecondaryWeapon(AWeapon* WeaponToEquip);
+	void AttachActorToCharacter(AActor* ActorToAttach, const FName& SocketName);
+	void PlayEquipWeaponSound(AWeapon* WeaponToEquip);
 
 private:
 	UPROPERTY()
@@ -70,6 +76,9 @@ private:
 
 	UPROPERTY(ReplicatedUsing = OnRep_EquippedWeapon)
 	AWeapon* EquippedWeapon;
+
+	UPROPERTY(ReplicatedUsing = OnRep_SecondaryWeapon)
+	AWeapon* SecondaryWeapon;
 
 	UPROPERTY(Replicated)
 	bool bAiming;

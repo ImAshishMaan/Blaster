@@ -1,8 +1,8 @@
 #include "Weapon.h"
-
 #include "Casing.h"
 #include "Blaster/Character/BlasterCharacter.h"
 #include "Blaster/PlayerController/BlasterPlayerController.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Engine/SkeletalMeshSocket.h"
@@ -119,7 +119,10 @@ void AWeapon::OnRep_Owner() {
 		BlasterOwnerCharacter = nullptr;
 		BlasterOwnerController = nullptr;
 	} else {
-		SetHUDAmmo();
+		BlasterOwnerCharacter = BlasterOwnerCharacter == nullptr ? Cast<ABlasterCharacter>(Owner) : BlasterOwnerCharacter;
+		if(BlasterOwnerCharacter && BlasterOwnerCharacter->GetEquippedWeapon() && BlasterOwnerCharacter->GetEquippedWeapon() == this) {
+			SetHUDAmmo();
+		}
 	}
 }
 
@@ -138,9 +141,6 @@ void AWeapon::SetWeaponState(EWeaponState State) {
 			WeaponMesh->SetEnableGravity(true);
 			WeaponMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
 		}
-		WeaponMesh->SetCustomDepthStencilValue(CUSTOM_DEPTH_BLUE);	
-		WeaponMesh->MarkRenderStateDirty();
-		EnableCustomDepth(false);
 		break;
 	case EWeaponState::EWS_Dropped:
 		if(HasAuthority()) {
@@ -179,7 +179,6 @@ void AWeapon::OnRep_WeaponState() {
 			WeaponMesh->SetEnableGravity(true);
 			WeaponMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
 		}
-		EnableCustomDepth(false);
 		break;
 	case EWeaponState::EWS_Dropped:
 		WeaponMesh->SetSimulatePhysics(true);
@@ -188,6 +187,7 @@ void AWeapon::OnRep_WeaponState() {
 		WeaponMesh->SetCollisionResponseToAllChannels(ECR_Block);
 		WeaponMesh->SetCollisionResponseToChannel(ECC_Pawn, ECR_Ignore);
 		WeaponMesh->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+		
 		WeaponMesh->SetCustomDepthStencilValue(CUSTOM_DEPTH_BLUE);	
 		WeaponMesh->MarkRenderStateDirty();
 		EnableCustomDepth(true);
