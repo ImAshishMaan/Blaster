@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "UObject/ObjectMacros.h"
 
 #define TRACE_LENGTH 80000.0f
 #define CUSTOM_DEPTH_PURPLE 250

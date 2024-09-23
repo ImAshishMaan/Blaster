@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "UObject/ObjectMacros.h"
 
 UENUM(BlueprintType)
 enum class ECombatState : uint8 {

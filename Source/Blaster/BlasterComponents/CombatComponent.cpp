@@ -10,6 +10,8 @@
 #include "Net/UnrealNetwork.h"
 #include "TimerManager.h"
 #include "Blaster/Weapon/WeaponTypes.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "Engine/GameViewportClient.h"
 #include "Sound/SoundCue.h"
 
 UCombatComponent::UCombatComponent() {
@@ -63,6 +65,17 @@ void UCombatComponent::FireButtonPressed(bool bPressed) {
 	if(bFIreButtonPressed) {
 		Fire();
 	}
+}
+
+void UCombatComponent::PickupAmmo(EWeaponType WeaponType, int32 AmmoAmount) {
+	if(CarriedAmmoMap.Contains(WeaponType)) {
+		CarriedAmmoMap[WeaponType] = FMath::Clamp(CarriedAmmoMap[WeaponType] + AmmoAmount, 0, MaxCarriedAmmo);
+		UpdateAmmoValues();
+	}
+	if(EquippedWeapon && EquippedWeapon->IsEmpty() && EquippedWeapon->GetWeaponType() == WeaponType) {	
+		Reload();
+	}
+	
 }
 
 void UCombatComponent::Fire() {
