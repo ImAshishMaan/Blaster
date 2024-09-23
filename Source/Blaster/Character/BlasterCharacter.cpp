@@ -466,8 +466,10 @@ void ABlasterCharacter::PollInit() {
 }
 
 
-void ABlasterCharacter::OnRep_Health() {
-	PlayHitReactMontage();
+void ABlasterCharacter::OnRep_Health(float OldHealth) {
+	if(Health < OldHealth) {
+		PlayHitReactMontage();
+	}
 	UpdateHUDHealth();
 }
 

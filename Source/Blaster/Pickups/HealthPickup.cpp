@@ -1,6 +1,7 @@
 #include "HealthPickup.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
+#include "Blaster/BlasterComponents/BuffComponent.h"
 #include "Blaster/Character/BlasterCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
@@ -19,7 +20,11 @@ void AHealthPickup::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AA
 
 	ABlasterCharacter* BlasterCharacter = Cast<ABlasterCharacter>(OtherActor);
 	if(BlasterCharacter) {
-		
+		UBuffComponent* Buff = BlasterCharacter->GetBuff();
+		if(Buff) {
+			Buff->Heal(HealAmount, HealingTime);
+			UE_LOG(LogTemp, Warning, TEXT("Buff->Heal"));
+		}
 	}
 
 	Destroy();
