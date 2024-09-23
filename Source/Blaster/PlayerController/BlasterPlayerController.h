@@ -39,7 +39,6 @@ protected:
 
 	virtual void BeginPlay() override;
 	void SetHUDTime();
-	void PollInit();
 
 	/*
 	 * Sync Time Between client and server

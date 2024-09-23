@@ -6,8 +6,10 @@
 #include "Blaster/Interfaces/InteractWithCrosshairsInterface.h"
 #include "Components/TimelineComponent.h"
 #include "GameFramework/Character.h"
+#include "Sound/SoundCue.h"
 #include "BlasterCharacter.generated.h"
 
+class UParticleSystemComponent;
 class UBuffComponent;
 class ABlasterPlayerState;
 class FOnTimelineFloat;
@@ -34,6 +36,9 @@ public:
 	virtual void OnRep_ReplicatedMovement() override;
 	void UpdateHUDHealth();
 	void UpdateHUDShield();
+	void UpdateHUDAmmo();
+
+	void SpawnDefaultWeapon();
 	
 	void Elim();
 	
@@ -213,6 +218,12 @@ private:
 
 	UPROPERTY()
 	ABlasterPlayerState* BlasterPlayerState;
+
+	/*
+	 * Default Weapon
+	 */
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AWeapon> DefaultWeaponClass;
 	
 public:
 	void SetOverlappingWeapon(AWeapon* Weapon);

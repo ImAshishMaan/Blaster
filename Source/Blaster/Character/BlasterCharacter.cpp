@@ -187,6 +187,8 @@ void ABlasterCharacter::OnRep_ReplicatedMovement() {
 void ABlasterCharacter::BeginPlay() {
 	Super::BeginPlay();
 
+	SpawnDefaultWeapon();
+	UpdateHUDAmmo();
 	UpdateHUDHealth();
 	UpdateHUDShield();
 	if(HasAuthority()) {
@@ -455,7 +457,7 @@ void ABlasterCharacter::ReceiveDamage(AActor* DamagedActor, float Damage, const 
 			Shield = 0.0f;
 		}
 	}
-	
+
 	Health = FMath::Clamp(Health - DamageToHealth, 0.0f, MaxHealth);
 	PlayHitReactMontage();
 	UpdateHUDHealth();
@@ -507,15 +509,38 @@ void ABlasterCharacter::UpdateHUDHealth() {
 
 void ABlasterCharacter::UpdateHUDShield() {
 	BlasterPlayerController = BlasterPlayerController == nullptr ? Cast<ABlasterPlayerController>(Controller) :
-								  BlasterPlayerController;
+		                          BlasterPlayerController;
 	if(BlasterPlayerController) {
 		BlasterPlayerController->SetHUDShield(Shield, MaxShield);
 	}
 }
 
+void ABlasterCharacter::UpdateHUDAmmo() {
+	BlasterPlayerController = BlasterPlayerController == nullptr ? Cast<ABlasterPlayerController>(Controller) :
+		                          BlasterPlayerController;
+	if(BlasterPlayerController && Combat && Combat->EquippedWeapon) {
+		BlasterPlayerController->SetHUDWeaponAmmo(Combat->EquippedWeapon->GetAmmo());
+		BlasterPlayerController->SetHUDCarriedAmmo(Combat->CarriedAmmo);
+	}
+}
+
+void ABlasterCharacter::SpawnDefaultWeapon() {
+	ABlasterGameMode* BlasterGameMode = Cast<ABlasterGameMode>(UGameplayStatics::GetGameMode(this));
+	UWorld* World = GetWorld();
+	if(BlasterGameMode && World && !bElimmed && DefaultWeaponClass && Combat) {
+		AWeapon* StartingWeapon = World->SpawnActor<AWeapon>(DefaultWeaponClass);
+		StartingWeapon->bDestroyWeapon = true;
+		Combat->EquipWeapon(StartingWeapon);
+	}
+}
+
 void ABlasterCharacter::Elim() {
 	if(Combat && Combat->EquippedWeapon) {
-		Combat->EquippedWeapon->Dropped();
+		if(Combat->EquippedWeapon->bDestroyWeapon) {
+			Combat->EquippedWeapon->Destroy();
+		}else {
+			Combat->EquippedWeapon->Dropped();
+		}
 	}
 	MulticastElim();
 	GetWorldTimerManager().SetTimer(ElimTimer, this, &ABlasterCharacter::ElimTimerFinished, ElimDelay);
