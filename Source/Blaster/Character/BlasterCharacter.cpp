@@ -6,6 +6,7 @@
 #include "Blaster/BlasterComponents/BuffComponent.h"
 #include "Blaster/BlasterComponents/CombatComponent.h"
 #include "Blaster/GameMode/BlasterGameMode.h"
+#include "Blaster/Pickups/AmmoPickup.h"
 #include "Blaster/PlayerController/BlasterPlayerController.h"
 #include "Blaster/PlayerState/BlasterPlayerState.h"
 #include "Blaster/Weapon/Weapon.h"
@@ -389,7 +390,6 @@ void ABlasterCharacter::ReloadButtonPressed() {
 	}
 }
 
-
 void ABlasterCharacter::TurnInPlace(float DeltaTime) {
 	//UE_LOG(LogTemp, Warning, TEXT("AO_Yaw: %f"), AO_Yaw);
 	if(AO_Yaw > 90.0f) {
@@ -535,13 +535,7 @@ void ABlasterCharacter::SpawnDefaultWeapon() {
 }
 
 void ABlasterCharacter::Elim() {
-	if(Combat && Combat->EquippedWeapon) {
-		if(Combat->EquippedWeapon->bDestroyWeapon) {
-			Combat->EquippedWeapon->Destroy();
-		} else {
-			Combat->EquippedWeapon->Dropped();
-		}
-	}
+	DropOrDestoryWeapon();
 	MulticastElim();
 	GetWorldTimerManager().SetTimer(ElimTimer, this, &ABlasterCharacter::ElimTimerFinished, ElimDelay);
 }
@@ -594,6 +588,26 @@ void ABlasterCharacter::ElimTimerFinished() {
 	ABlasterGameMode* BlasterGameMode = GetWorld()->GetAuthGameMode<ABlasterGameMode>();
 	if(BlasterGameMode) {
 		BlasterGameMode->RequestRespawn(this, Controller);
+	}
+}
+
+void ABlasterCharacter::DropOrDestoryWeapon() {
+	if(Combat && Combat->EquippedWeapon) {
+		if(Combat->EquippedWeapon) {
+			DropOrDestoryWeapon(Combat->EquippedWeapon);
+		}
+		if(Combat->SecondaryWeapon) {
+			DropOrDestoryWeapon(Combat->SecondaryWeapon);
+		}
+	}
+}
+
+void ABlasterCharacter::DropOrDestoryWeapon(AWeapon* WeaponToDrop) {
+	if(WeaponToDrop == nullptr) return;
+	if(WeaponToDrop->bDestroyWeapon) {
+		WeaponToDrop->Destroy();
+	} else {
+		WeaponToDrop->Dropped();
 	}
 }
 

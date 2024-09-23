@@ -74,6 +74,8 @@ protected:
 	void FireButtonPressed();
 	void FireButtonReleased();
 	void ReloadButtonPressed();
+	void DropOrDestoryWeapon(AWeapon* WeaponToDrop);
+	void DropOrDestoryWeapon();
 
 	UFUNCTION()
 	void ReceiveDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser);
