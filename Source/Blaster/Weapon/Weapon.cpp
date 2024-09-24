@@ -241,7 +241,9 @@ void AWeapon::Fire(const FVector& HitTarget) {
 	}
 
 	// Ammo Count
-	SpendRound();
+	if(HasAuthority()) {
+		SpendRound();
+	}
 }
 
 void AWeapon::Dropped() {
