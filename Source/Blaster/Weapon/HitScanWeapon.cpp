@@ -23,11 +23,11 @@ void AHitScanWeapon::Fire(const FVector& HitTarget) {
 		ABlasterCharacter* BlasterCharacter = Cast<ABlasterCharacter>(FireHit.GetActor());
 		if(BlasterCharacter && HasAuthority() && InstigatorController) {
 			UGameplayStatics::ApplyDamage(BlasterCharacter, Damage, InstigatorController, this,
-										  UDamageType::StaticClass());
+			                              UDamageType::StaticClass());
 		}
 		if(ImpactParticle) {
 			UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ImpactParticle, FireHit.ImpactPoint,
-													 FireHit.ImpactNormal.Rotation());
+			                                         FireHit.ImpactNormal.Rotation());
 		}
 		if(HitSound) {
 			UGameplayStatics::PlaySoundAtLocation(this, HitSound, FireHit.ImpactPoint);
@@ -44,7 +44,7 @@ void AHitScanWeapon::Fire(const FVector& HitTarget) {
 void AHitScanWeapon::WeaponTraceHit(const FVector& TraceStart, const FVector& HitTarget, FHitResult& OutHit) {
 	UWorld* World = GetWorld();
 	if(World) {
-		FVector End = bUseScatter ? TraceEndWithScatter(TraceStart, HitTarget) : TraceStart + (HitTarget - TraceStart) * 2.0f;
+		FVector End = TraceStart + (HitTarget - TraceStart) * 1.25f;
 		World->LineTraceSingleByChannel(OutHit, TraceStart, End, ECollisionChannel::ECC_Visibility);
 		FVector BeamEnd = End;
 		if(OutHit.bBlockingHit) {
@@ -60,18 +60,4 @@ void AHitScanWeapon::WeaponTraceHit(const FVector& TraceStart, const FVector& Hi
 	}
 }
 
-FVector AHitScanWeapon::TraceEndWithScatter(const FVector& TraceStart, const FVector& HitTarget) {
-	FVector ToTargetNormalized = (HitTarget - TraceStart).GetSafeNormal();
-	FVector SphereCenter = TraceStart + ToTargetNormalized * DistanceToSphere;
-	FVector RandVec = UKismetMathLibrary::RandomUnitVector() * FMath::FRandRange(0.f, SphereRadius);
-	FVector EndLoc = SphereCenter + RandVec;
-	FVector ToEndLoc = EndLoc - TraceStart;
 
-	//DrawDebugSphere(GetWorld(), SphereCenter, SphereRadius, 12, FColor::Red, true);
-	//DrawDebugSphere(GetWorld(), EndLoc, 4, 12, FColor::Green, true);
-	//DrawDebugLine(GetWorld(), TraceStart, FVector(TraceStart + ToEndLoc * TRACE_LENGTH / ToEndLoc.Size()), FColor::Cyan, true);
-	
-	
-	return FVector(TraceStart + ToEndLoc * TRACE_LENGTH / ToEndLoc.Size());
-	
-}
