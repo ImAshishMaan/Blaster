@@ -47,13 +47,11 @@ void AWeapon::BeginPlay() {
 		PickupWidget->SetVisibility(false);
 	}
 
-	if(HasAuthority()) {
-		AreaSphere->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		AreaSphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	AreaSphere->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	AreaSphere->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 
-		AreaSphere->OnComponentBeginOverlap.AddDynamic(this, &AWeapon::OnSphereOverlap);
-		AreaSphere->OnComponentEndOverlap.AddDynamic(this, &AWeapon::OnSphereEndOverlap);
-	}
+	AreaSphere->OnComponentBeginOverlap.AddDynamic(this, &AWeapon::OnSphereOverlap);
+	AreaSphere->OnComponentEndOverlap.AddDynamic(this, &AWeapon::OnSphereEndOverlap);
 }
 
 
@@ -167,7 +165,6 @@ void AWeapon::OnEquipped() {
 		WeaponMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
 	}
 	EnableCustomDepth(false);
-	
 }
 
 void AWeapon::OnDropped() {
@@ -198,7 +195,7 @@ void AWeapon::OnEquipSecondary() {
 		WeaponMesh->SetEnableGravity(true);
 		WeaponMesh->SetCollisionResponseToAllChannels(ECR_Ignore);
 	}
-	WeaponMesh->SetCustomDepthStencilValue(CUSTOM_DEPTH_TAN);	
+	WeaponMesh->SetCustomDepthStencilValue(CUSTOM_DEPTH_TAN);
 	WeaponMesh->MarkRenderStateDirty();
 	EnableCustomDepth(true);
 }
@@ -206,7 +203,6 @@ void AWeapon::OnEquipSecondary() {
 bool AWeapon::IsEmpty() {
 	return Ammo <= 0;
 }
-
 
 
 void AWeapon::ShowPickupWidget(bool bShowWidget) {
